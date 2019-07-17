@@ -7,7 +7,7 @@
       <SidebarGroup
         v-if="item.type === 'group'"
         :item="item"
-        :open="i === openGroupIndex"
+        :open="openGroupIndices.has(i)"
         :collapsable="item.collapsable || item.collapsible"
         :depth="depth"
         @toggle="toggleGroup(i)"
@@ -39,7 +39,7 @@ export default {
 
   data () {
     return {
-      openGroupIndex: 0
+      openGroupIndices: new Set([0])
     }
   },
 
@@ -60,12 +60,20 @@ export default {
         this.items
       )
       if (index > -1) {
-        this.openGroupIndex = index
+        this.openGroupIndices = new Set([index])
       }
     },
 
     toggleGroup (index) {
-      this.openGroupIndex = index === this.openGroupIndex ? -1 : index
+      if (this.openGroupIndices.has(index)) {
+        this.openGroupIndices.delete(index)
+      } else {
+        this.openGroupIndices.add(index)
+      }
+
+      // a change to the set data structure does not trigger a UI update,
+      // so force a repaint of the UI
+      this.$forceUpdate()
     },
 
     isActive (page) {
