@@ -27,6 +27,5 @@ app.use('/sidebar-fix', express.static('sidebar-fix'));
 // START SERVER //
 // ------------ //
 
-// listen
-const port = 3000; // internal port
+const port = process.env.PORT || 3000;
 app.listen(port);
